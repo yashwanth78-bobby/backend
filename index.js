@@ -1,33 +1,65 @@
-const lib = require('./lib.js')
+const fs = require('fs');
+const index = fs.readFileSync('index.html', 'utf-8');
+const data = JSON.parse(fs.readFileSync('data.json', 'utf-8'));
+const products = data.products;
+
 const express = require('express');
-
-console.log('hello ')
-
+const morgan = require('morgan');
 const server = express();
-server.listen(8080);
 
-
-
-
-
-
-
-
-// import {sum,diff} from './lib.js';
-// const fs = require('fs');
-
-// const t1 = performance.now();
-
-// const txt = fs.readFileSync('demo.txt','utf-8');
-
-// fs.readFile('demo.txt','utf-8',(err, txt)=>{
-//    console.log(txt)
+//bodyParser
+server.use(express.json());
+// server.use(express.urlencoded());
+server.use(morgan('default'))
+server.use(express.static('public'));
+// server.use((req, res, next) => {
+//   console.log(
+//     req.method,
+//     req.ip,
+//     req.hostname,
+//     new Date(),
+//     req.get('User-Agent')
+//   );
+//   next();
 // });
 
-// console.log(txt);
+const auth = (req, res, next) => {
+  // console.log(req.query);
 
-// console.log(lib.sum(4,5),lib.diff(3,6))
-// const t2 = performance.now();
-// console.log(t2-t1);
-// const a = 5;
+  // if (req.body.password == '123') {
+  //   next();
+  // } else {
+  //   res.sendStatus(401);
+  // }
+  next()
+ 
+};
 
+// API - Endpoint - Route
+server.get('/product/:id', auth, (req, res) => {
+  console.log(req.params)
+  res.json({ type: 'GET' });
+});
+server.post('/', auth, (req, res) => {
+  res.json({ type: 'POST' });
+});
+server.put('/', (req, res) => {
+  res.json({ type: 'PUT' });
+});
+server.delete('/', (req, res) => {
+  res.json({ type: 'DELETE' });
+});
+server.patch('/', (req, res) => {
+  res.json({ type: 'PATCH' });
+});
+
+server.get('/demo', (req, res) => {
+  // res.sendStatus(404);
+  // res.json(products)
+  // res.status(201).send('<h1>hello</h1>')
+  // res.sendFile('/Users/abhishekrathore/Desktop/node-app/index.html')
+});
+
+server.listen(8080, () => {
+  console.log('server started');
+});
