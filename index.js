@@ -1,33 +1,16 @@
-const lib = require('./lib.js')
 const express = require('express');
-
-console.log('hello ')
-
+const morgan = require('morgan');
 const server = express();
-server.listen(8080);
+const productRouter = require('./routes/product')
+const userRouter = require('./routes/user')
 
+//bodyParser
+server.use(express.json());
+server.use(morgan('default'));
+server.use(express.static('public'));
+server.use('/products',productRouter.router);
+server.use('/users',userRouter.router);
 
-
-
-
-
-
-
-// import {sum,diff} from './lib.js';
-// const fs = require('fs');
-
-// const t1 = performance.now();
-
-// const txt = fs.readFileSync('demo.txt','utf-8');
-
-// fs.readFile('demo.txt','utf-8',(err, txt)=>{
-//    console.log(txt)
-// });
-
-// console.log(txt);
-
-// console.log(lib.sum(4,5),lib.diff(3,6))
-// const t2 = performance.now();
-// console.log(t2-t1);
-// const a = 5;
-
+server.listen(8080, () => {
+  console.log('server started');
+});
